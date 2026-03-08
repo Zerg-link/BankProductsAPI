@@ -8,6 +8,18 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BankProductsAPI.Application\BankProductsAPI.Application.csproj" />
+    <ProjectReference Include="..\BankProductsAPI.Domain\BankProductsAPI.Domain.csproj" />
+    <ProjectReference Include="..\BankProductsAPI.Infrastructure\BankProductsAPI.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -54,6 +54,11 @@ namespace BankProductsAPI.Domain.Entities
         public int CreditRating { get; set; }
 
         /// <summary>
+        /// Пароль клиента в виде хеша.
+        /// </summary>
+        public string PasswordHash { get; set; }
+
+        /// <summary>
         /// Дата регистрации в базе данных.
         /// </summary>
         public DateTime RegisterDate { get; set; }

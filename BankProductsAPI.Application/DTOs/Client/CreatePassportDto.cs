@@ -1,30 +1,15 @@
-﻿// BankProductsAPI.Domain/Entities/Passport.cs
+﻿// BankProductsAPI.Application/Client/CreatePassportDto.cs
 
 
 using BankProductsAPI.Domain.Enums;
 
-namespace BankProductsAPI.Domain.Entities
+namespace BankProductsAPI.Application.DTOs.Client
 {
     /// <summary>
-    /// Класс описывает информацию о паспорте.
+    /// Класс, описывающий: какие данные вводятся пользователем для создания нового паспорта.
     /// </summary>
-    public class Passport
+    public class CreatePassportDto
     {
-        /// <summary>
-        /// Идентификатор паспорта в базе данных.
-        /// </summary>
-        public int Id { get; set; }
-
-        /// <summary>
-        /// Идентификатор клиента, которому принадлежит паспорт.
-        /// </summary>
-        public int ClientId { get; set; }
-
-        /// <summary>
-        /// Навигационное свойство: клиент, которому принадлежит паспорт.
-        /// </summary>
-        public Client Client { get; set; }
-
         /// <summary>
         /// Номер паспорта.
         /// </summary>

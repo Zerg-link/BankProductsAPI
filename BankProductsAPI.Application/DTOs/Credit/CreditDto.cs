@@ -1,29 +1,19 @@
-﻿// BankProductsAPI.Domain/Entities/Credit.cs
+﻿// BankProductsAPI.Application/Credit/CreditDto.cs
 
 
 using BankProductsAPI.Domain.Enums;
 
-namespace BankProductsAPI.Domain.Entities
+namespace BankProductsAPI.Application.DTOs.Credit
 {
     /// <summary>
-    /// Класс описывает информацию о кредите.
+    /// Класс, описывающий: какие данные показываются после создания кредита.
     /// </summary>
-    public class Credit
+    public class CreditDto
     {
         /// <summary>
         /// Уникальный идентификатор кредита.
         /// </summary>
         public int Id { get; set; }
-
-        /// <summary>
-        /// Идентификатор связанного с кредитом клиента.
-        /// </summary>
-        public int ClientId { get; set; }
-
-        /// <summary>
-        /// Навигационное свойство: клиент, которому принадлежит кредит.
-        /// </summary>
-        public Client Client { get; set; }
 
         /// <summary>
         /// Название кредита.
@@ -59,7 +49,6 @@ namespace BankProductsAPI.Domain.Entities
         /// Статус кредита.
         /// </summary>
         public CreditStatus Status { get; set; }
-
 
         /// <summary>
         /// Дата создания кредита.

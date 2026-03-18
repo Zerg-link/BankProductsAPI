@@ -1,6 +1,8 @@
 ﻿// BankProductsAPI.Domain/Entities/Deposit.cs
 
 
+using BankProductsAPI.Domain.Enums;
+
 namespace BankProductsAPI.Domain.Entities
 {
     /// <summary>
@@ -36,7 +38,7 @@ namespace BankProductsAPI.Domain.Entities
         /// <summary>
         /// Валюта, в которой содержится депозит.
         /// </summary>
-        public string Currency {  get; set; }
+        public Currency Currency {  get; set; }
 
         /// <summary>
         /// Длительность депозита в месяцах.
@@ -51,12 +53,12 @@ namespace BankProductsAPI.Domain.Entities
         /// <summary>
         /// Тип депозита.
         /// </summary>
-        public string Type { get; set; }
+        public DepositType Type { get; set; }
 
         /// <summary>
         /// Статус депозита: открыт или закрыт.
         /// </summary>
-        public bool IsActive { get; set; }
+        public DepositStatus Status { get; set; }
 
         /// <summary>
         /// Дата создания депозита.

@@ -23,7 +23,7 @@ namespace BankProductsAPI.Infrastructure.Data
         /// <summary>
         /// Таблица со всеми заявлениями из базы данных.
         /// </summary>
-        public DbSet<Application> Applications { get; set; }
+        public DbSet<Domain.Entities.Application> Applications { get; set; }
 
         /// <summary>
         /// Таблица со всеми клиентами из базы данных.

@@ -48,7 +48,7 @@ namespace BankProductsAPI.Application.DTOs.Deposit
         /// <summary>
         /// Статус депозита: открыт или закрыт.
         /// </summary>
-        public DepositStatuses Status { get; set; }
+        public DepositStatus Status { get; set; }
 
         /// <summary>
         /// Дата создания депозита.

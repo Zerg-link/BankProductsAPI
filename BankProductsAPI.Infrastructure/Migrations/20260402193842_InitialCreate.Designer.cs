@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BankProductsAPI.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260308154625_InitialCreate")]
+    [Migration("20260402193842_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -91,6 +91,10 @@ namespace BankProductsAPI.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Patronymic")
                         .HasColumnType("text");
 
@@ -126,9 +130,8 @@ namespace BankProductsAPI.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Currency")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Duration")
                         .HasColumnType("integer");
@@ -138,12 +141,6 @@ namespace BankProductsAPI.Infrastructure.Migrations
 
                     b.Property<decimal>("InterestRate")
                         .HasColumnType("numeric");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsExpired")
-                        .HasColumnType("boolean");
 
                     b.Property<decimal>("MonthlyPayment")
                         .HasColumnType("numeric");
@@ -155,9 +152,11 @@ namespace BankProductsAPI.Infrastructure.Migrations
                     b.Property<decimal>("PaidAmount")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -183,9 +182,8 @@ namespace BankProductsAPI.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Currency")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Duration")
                         .HasColumnType("integer");
@@ -196,16 +194,15 @@ namespace BankProductsAPI.Infrastructure.Migrations
                     b.Property<decimal>("InterestRate")
                         .HasColumnType("numeric");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -236,9 +233,8 @@ namespace BankProductsAPI.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Gender")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Number")
                         .IsRequired()

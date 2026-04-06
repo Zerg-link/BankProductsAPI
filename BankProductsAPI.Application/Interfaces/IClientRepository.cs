@@ -15,5 +15,6 @@ namespace BankProductsAPI.Application.Interfaces
         Task AddAsync(Client client);
         Task UpdateAsync(Client client);
         Task DeleteAsync(int id);
+        Task<Client?> GetByEmailAsync(string email);
     }
 }

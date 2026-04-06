@@ -1,6 +1,8 @@
 ﻿// BankProductsAPI.Domain/Entities/Client.cs
 
 
+using BankProductsAPI.Domain.Enums;
+
 namespace BankProductsAPI.Domain.Entities
 {
     /// <summary>
@@ -41,17 +43,22 @@ namespace BankProductsAPI.Domain.Entities
         /// <summary>
         /// СНИЛС.
         /// </summary>
-        public string Snils { get; set; }
+        public string? Snils { get; set; }
 
         /// <summary>
         /// ИНН.
         /// </summary>
-        public string Inn { get; set; }
+        public string? Inn { get; set; }
 
         /// <summary>
         /// Кредитный рейтинг.
         /// </summary>
         public int CreditRating { get; set; }
+
+        /// <summary>
+        /// Роль пользователя.
+        /// </summary>
+        public Role Role { get; set; }
 
         /// <summary>
         /// Пароль клиента в виде хеша.

@@ -3,6 +3,7 @@
 
 using BankProductsAPI.Application.DTOs.Credit;
 using BankProductsAPI.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -12,6 +13,7 @@ namespace BankProductsAPI.Controllers
     /// Контроллер для работы с кредитами. Принимает HTTP на вход и возвращает HTTP ответ. Такой вот обработчик URL.
     /// </summary>
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")] // Определяет доступность контроллера по такому пути.
     public class CreditsController : ControllerBase
     {

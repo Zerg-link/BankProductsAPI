@@ -55,5 +55,12 @@ namespace BankProductsAPI.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<Client?> GetByEmailAsync(string email)
+        {
+            return await _context.Clients
+                .Include(c => c.PassportInfo)
+                .FirstOrDefaultAsync(c => c.Email == email);
+        }
     }
 }

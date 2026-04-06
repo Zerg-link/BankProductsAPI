@@ -80,5 +80,6 @@ namespace BankProductsAPI.Domain.Entities
         /// Сумма, которую клиент уже выплатил.
         /// </summary>
         public decimal PaidAmount { get; set; }
+
     }
 }

@@ -75,5 +75,18 @@ namespace BankProductsAPI.Controllers
             await _service.DeleteAsync(id);
             return NoContent();
         }
+
+        /// <summary>
+        /// Метод расчета финансовой части кредита по HTTP запросу.
+        /// </summary>
+        /// <param name="id">ID кредита.</param>
+        /// <returns>Код страницы с информацией по финасовой части кредит.</returns>
+        [HttpGet("{id}/calculation")]
+        public async Task<IActionResult> CreditCalculation(int id)
+        {
+            var creditCalculation = await _service.CalculateAsync(id);
+            if (creditCalculation == null) return NotFound();
+            return Ok(creditCalculation);
+        }
     }
 }

@@ -61,6 +61,7 @@ namespace BankProductsAPI.Application.Services
             credit.Status = CreditStatus.Active;
             credit.ClientId = clientId;
             credit.ExpiresAt = DateTime.UtcNow.AddMonths(dto.Duration);
+            credit.MonthlyPayment = CalculateMonthlyPayment(dto.Amount, dto.InterestRate, dto.Duration);
 
             await _repository.AddAsync(credit);
             return _mapper.Map<CreditDto>(credit);
@@ -74,6 +75,45 @@ namespace BankProductsAPI.Application.Services
         public async Task DeleteAsync(int id)
         {
             await _repository.DeleteAsync(id);
+        }
+
+        /// <summary>
+        /// Метод, который просчитывает финансовую часть кредита (ежемесячный платеж, итоговую переплату и т.д.)
+        /// </summary>
+        /// <param name="id">ID кредита.</param>
+        /// <returns>Null или финансовую информацию о кредите.</returns>
+        public async Task<CreditCalculationDto?> CalculateAsync(int id)
+        {
+            var credit = await _repository.GetByIdAsync(id);
+            if (credit == null) return null;
+
+            var monthlyPayment = CalculateMonthlyPayment(credit.Amount, credit.InterestRate, credit.Duration);
+
+            return new CreditCalculationDto
+            {
+                OriginalAmount = credit.Amount,
+                MonthlyPayment = monthlyPayment,
+                TotalAmount = monthlyPayment * credit.Duration,
+                Overpayment = monthlyPayment * credit.Duration - credit.Amount
+            };
+        }
+
+        /// <summary>
+        /// Метод расчета ежемесячного платежа для кредитки.
+        /// </summary>
+        /// <param name="amount">Сумма, на которую взяли кредит.</param>
+        /// <param name="interestRate">n-ое количество процентов годовых кредита</param>
+        /// <param name="duration">Количество месяцев для кредитки.</param>
+        /// <returns></returns>
+        private decimal CalculateMonthlyPayment(decimal amount, decimal interestRate, int duration)
+        {
+            if (interestRate == 0)
+                return amount / duration;
+
+            var monthlyRate = interestRate / 12 / 100;
+            var pow = (decimal)Math.Pow((double)(1 + monthlyRate), duration);
+
+            return amount * monthlyRate * pow / (pow - 1);
         }
     }
 }

@@ -81,7 +81,7 @@ namespace BankProductsAPI.Controllers
         /// Метод расчета выгоды от депозита по HTTP запросу.
         /// </summary>
         /// <param name="id">ID депозита.</param>
-        /// <returns></returns>
+        /// <returns>Код страницы с информацией по финасовой части депозита.</returns>
         [HttpGet("{id}/yield")]
         public async Task<IActionResult> CalculateYield(int id)
         {

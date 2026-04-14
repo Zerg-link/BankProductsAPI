@@ -74,5 +74,40 @@ namespace BankProductsAPI.Application.Services
         {
             await _repository.DeleteAsync(id);
         }
+
+        /// <summary>
+        /// Асинхронный метод, рассчитывающий доходность выбранного депозита.
+        /// </summary>
+        /// <param name="id"> ID депозита.</param>
+        /// <returns> Null, если нет депозита. Или информацию о доходности депозита.</returns>
+        public async Task<DepositYieldDto?> CalculateYieldAsync(int id)
+        {
+            var deposit = await _repository.GetByIdAsync(id);
+            if (deposit == null) 
+                return null;
+
+            DepositYieldDto depositYieldDto = new DepositYieldDto();
+            depositYieldDto.OriginalAmount = deposit.Amount;
+            // Срочный депозит.
+            if (deposit.Type == DepositType.Term)
+            {
+                depositYieldDto.FinalAmount = deposit.Amount * (1 + deposit.InterestRate / 100 * deposit.Duration / 12);
+            }
+
+            // Накопительный депозит.
+            if (deposit.Type == DepositType.Saving)
+            {
+                depositYieldDto.FinalAmount = deposit.Amount * (1 + deposit.InterestRate / 100 * deposit.Duration / 12);
+            }
+
+            // Депозит с капитализацией.
+            if (deposit.Type == DepositType.Capitalized)
+            {
+                depositYieldDto.FinalAmount = deposit.Amount * (decimal)Math.Pow((double)(1 + deposit.InterestRate / 100 / 12), deposit.Duration);
+            }
+            depositYieldDto.Profit = depositYieldDto.FinalAmount - depositYieldDto.OriginalAmount;
+
+            return depositYieldDto;
+        }
     }
 }

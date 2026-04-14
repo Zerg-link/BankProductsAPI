@@ -76,5 +76,18 @@ namespace BankProductsAPI.Controllers
             await _service.DeleteAsync(id);
             return NoContent();
         }
+
+        /// <summary>
+        /// Метод расчета выгоды от депозита по HTTP запросу.
+        /// </summary>
+        /// <param name="id">ID депозита.</param>
+        /// <returns></returns>
+        [HttpGet("{id}/yield")]
+        public async Task<IActionResult> CalculateYield(int id)
+        {
+            var depositYieldDto = await _service.CalculateYieldAsync(id);
+            if (depositYieldDto == null) return NotFound();
+            return Ok(depositYieldDto);
+        }
     }
 }

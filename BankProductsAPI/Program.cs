@@ -1,8 +1,11 @@
 using BankProductsAPI.Application.Auth;
 using BankProductsAPI.Application.Interfaces;
 using BankProductsAPI.Application.Services;
+using BankProductsAPI.Application.Validators;
 using BankProductsAPI.Infrastructure.Data;
 using BankProductsAPI.Infrastructure.Repositories;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -59,6 +62,9 @@ builder.Services.AddScoped<CreditService>();
 builder.Services.AddScoped<ApplicationService>();
 builder.Services.AddScoped<AuthService>();
 
+// Валидация.
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateClientValidator>();
 
 var app = builder.Build();
 

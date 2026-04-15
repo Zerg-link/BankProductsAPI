@@ -17,6 +17,7 @@ namespace BankProductsAPI.Application.Services
         private readonly IApplicationRepository _repository;
         private readonly IMapper _mapper;
 
+
         /// <summary>
         /// Конструктор класса.
         /// </summary>
@@ -74,6 +75,31 @@ namespace BankProductsAPI.Application.Services
         public async Task DeleteAsync(int id)
         {
             await _repository.DeleteAsync(id);
+        }
+
+
+        /// <summary>
+        /// Метод, изменяющий статус заявления на новый.
+        /// </summary>
+        /// <param name="id">ID заявления.</param>
+        /// <param name="dto">Контейнер с информацией об изменении статуса заявления.</param>
+        /// <returns></returns>
+        public async Task<ApplicationDto?> ChangeStatusAsync(int id, ChangeApplicationStatusDto dto)
+        {
+            var application = await _repository.GetByIdAsync(id);
+            if (application == null) return null;
+
+            if (!ApplicationStateMachine.CanTransition(application.Status, dto.NewStatus))
+                throw new InvalidOperationException(
+                    $"Нельзя перевести заявление из {application.Status} в {dto.NewStatus}");
+
+            application.Status = dto.NewStatus;
+            application.ManagerComment = dto.ManagerComment;
+            application.UpdatedAt = DateTime.UtcNow;
+
+            await _repository.UpdateAsync(application);
+
+            return _mapper.Map<ApplicationDto>(application);
         }
     }
 }

@@ -2,7 +2,6 @@
 
 
 using BankProductsAPI.Application.Interfaces;
-using BankProductsAPI.Domain.Entities;
 using BankProductsAPI.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

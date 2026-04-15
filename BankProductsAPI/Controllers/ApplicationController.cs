@@ -76,5 +76,27 @@ namespace BankProductsAPI.Controllers
             await _service.DeleteAsync(id);
             return NoContent();
         }
+
+
+        /// <summary>
+        /// Метод обновления статуса заявления по HTTP запросу.
+        /// </summary>
+        /// <param name="id">ID заявления.</param>
+        /// <param name="dto">Контейнер с информацией о новом заявлении.</param>
+        /// <returns>Код страницы.</returns>
+        [HttpPatch("{id}/status")]
+        public async Task<IActionResult> ChangeStatus(int id, ChangeApplicationStatusDto dto)
+        {
+            try
+            {
+                var result = await _service.ChangeStatusAsync(id, dto);
+                if (result == null) return NotFound();
+                return Ok(result);
+            }
+            catch(InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

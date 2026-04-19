@@ -5,6 +5,7 @@ using AutoMapper;
 using BankProductsAPI.Application.DTOs.Application;
 using BankProductsAPI.Application.Interfaces;
 using BankProductsAPI.Domain.Enums;
+using Microsoft.Extensions.Logging;
 
 
 namespace BankProductsAPI.Application.Services
@@ -16,17 +17,18 @@ namespace BankProductsAPI.Application.Services
     {
         private readonly IApplicationRepository _repository;
         private readonly IMapper _mapper;
-
+        private readonly ILogger<ApplicationService> _logger;
 
         /// <summary>
         /// Конструктор класса.
         /// </summary>
         /// <param name="repository">Репозиторий, содержащий методы для работы с CRUD (непосредственно методы работы с БД).</param>
         /// <param name="mapper">Нужен для того, чтобы облегчить передачу данных между классами. Автоматически копирует все атрибуты.</param>
-        public ApplicationService(IApplicationRepository repository, IMapper mapper)
+        public ApplicationService(IApplicationRepository repository, IMapper mapper, ILogger<ApplicationService> logger)
         {
             _repository = repository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -64,6 +66,9 @@ namespace BankProductsAPI.Application.Services
             application.UpdatedAt = DateTime.UtcNow;
 
             await _repository.AddAsync(application);
+
+
+            _logger.LogInformation("Заявление {Id} было создано для клиента {ClientId}.", application.Id, clientId);
             return _mapper.Map<ApplicationDto>(application);
         }
 
@@ -75,6 +80,7 @@ namespace BankProductsAPI.Application.Services
         public async Task DeleteAsync(int id)
         {
             await _repository.DeleteAsync(id);
+            _logger.LogInformation("Заявление {Id} удалено.", id);
         }
 
 
@@ -87,11 +93,16 @@ namespace BankProductsAPI.Application.Services
         public async Task<ApplicationDto?> ChangeStatusAsync(int id, ChangeApplicationStatusDto dto)
         {
             var application = await _repository.GetByIdAsync(id);
-            if (application == null) return null;
+            if (application == null) {
+                _logger.LogWarning("Заявление {Id} не было найдено.", id);
+                return null; }
 
             if (!ApplicationStateMachine.CanTransition(application.Status, dto.NewStatus))
+            {
+                _logger.LogWarning("Нельзя заявление {Id} из статуса {Old} перевести в статус: {New}.", id, application.Status, dto.NewStatus);
                 throw new InvalidOperationException(
                     $"Нельзя перевести заявление из {application.Status} в {dto.NewStatus}");
+            }
 
             application.Status = dto.NewStatus;
             application.ManagerComment = dto.ManagerComment;
@@ -99,6 +110,7 @@ namespace BankProductsAPI.Application.Services
 
             await _repository.UpdateAsync(application);
 
+            _logger.LogInformation("Заявление {Id}: статус изменён на {Status}.", id, dto.NewStatus);
             return _mapper.Map<ApplicationDto>(application);
         }
     }

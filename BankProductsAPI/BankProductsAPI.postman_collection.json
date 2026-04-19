@@ -1,0 +1,401 @@
+{
+	"info": {
+		"name": "BankProductsAPI",
+		"description": "Коллекция запросов для тестирования BankProductsAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://localhost:7001",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set('token', jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Иван\",\n  \"lastName\": \"Петров\",\n  \"email\": \"ivan@example.com\",\n  \"password\": \"Password123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Auth/Register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Auth", "Register"]
+						}
+					}
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set('token', jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"ivan@example.com\",\n  \"password\": \"Password123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Auth", "login"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Clients",
+			"item": [
+				{
+					"name": "Get All Clients",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Clients",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Clients"]
+						}
+					}
+				},
+				{
+					"name": "Get Client By Id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Clients/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Clients", "1"]
+						}
+					}
+				},
+				{
+					"name": "Create Client",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Мария\",\n  \"lastName\": \"Сидорова\",\n  \"email\": \"maria@example.com\",\n  \"password\": \"Password456!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Clients",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Clients"]
+						}
+					}
+				},
+				{
+					"name": "Delete Client",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Clients/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Clients", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Deposits",
+			"item": [
+				{
+					"name": "Get All Deposits",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Deposits",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Deposits"]
+						}
+					}
+				},
+				{
+					"name": "Get Deposit By Id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Deposits/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Deposits", "1"]
+						}
+					}
+				},
+				{
+					"name": "Create Deposit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 100000,\n  \"interestRate\": 12,\n  \"duration\": 12,\n  \"type\": 0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Deposits/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Deposits", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Deposit",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Deposits/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Deposits", "1"]
+						}
+					}
+				},
+				{
+					"name": "Calculate Yield",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Deposits/1/yield",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Deposits", "1", "yield"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Credits",
+			"item": [
+				{
+					"name": "Get All Credits",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Credits",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Credits"]
+						}
+					}
+				},
+				{
+					"name": "Get Credit By Id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Credits/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Credits", "1"]
+						}
+					}
+				},
+				{
+					"name": "Create Credit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 500000,\n  \"interestRate\": 15,\n  \"duration\": 24\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Credits/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Credits", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Credit",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Credits/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Credits", "1"]
+						}
+					}
+				},
+				{
+					"name": "Calculate Credit",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Credits/1/calculation",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Credits", "1", "calculation"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Applications",
+			"item": [
+				{
+					"name": "Get All Applications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Application",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Application"]
+						}
+					}
+				},
+				{
+					"name": "Get Application By Id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Application/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Application", "1"]
+						}
+					}
+				},
+				{
+					"name": "Create Application",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": 0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Application/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Application", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Application",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/Application/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Application", "1"]
+						}
+					}
+				},
+				{
+					"name": "Change Application Status",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"newStatus\": 1,\n  \"managerComment\": \"Заявка на рассмотрении.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/Application/1/status",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "Application", "1", "status"]
+						}
+					}
+				}
+			]
+		}
+	]
+}

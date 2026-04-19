@@ -3,6 +3,7 @@ using BankProductsAPI.Application.DTOs.Auth;
 using BankProductsAPI.Application.Interfaces;
 using BankProductsAPI.Domain.Entities;
 using BankProductsAPI.Domain.Enums;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -16,14 +17,20 @@ namespace BankProductsAPI.Application.Services
     public class AuthService
     {
         private readonly IClientRepository _repository;
+        private readonly ILogger<AuthService> _logger;
+        private readonly AuthOptions _authOptions;
 
         /// <summary>
         /// Конструктор класса.
         /// </summary>
         /// <param name="repository">Класс, содержащий методы для работы с БД по части клиентов.</param>
-        public AuthService(IClientRepository repository)
+        /// <param name="authOptions">Параметры авторизации. Берёт их из appsettings.json.</param>
+        /// <param name="logger">Логгер для... сохранения логов.</param>
+        public AuthService(IClientRepository repository, ILogger<AuthService> logger, AuthOptions authOptions)
         {
             _repository = repository;
+            _logger = logger;
+            _authOptions = authOptions;
         }
 
         /// <summary>
@@ -48,7 +55,8 @@ namespace BankProductsAPI.Application.Services
             // 2. Сохранение клиента в базе данных.
             await _repository.AddAsync(client);
 
-            // 3. Генерация токена и его возвращение.
+            // 3. Генерация токена и его возвращение. Логгирование.
+            _logger.LogInformation("Клиент зарегистрирован: {Email}.", dot.Email);
             return new TokenDto { Token = GenerateToken(client) };
         }
 
@@ -61,13 +69,21 @@ namespace BankProductsAPI.Application.Services
         {
             // 1. Поиск клиента по email.
             var client = await _repository.GetByEmailAsync(dto.Email);
-            if (client == null) return null;
+            if (client == null)
+            {
+                _logger.LogWarning("Ошибка входа: email {Email} не был найден.", dto.Email);
+                return null;
+            }
 
             // 2. Проверка пароля.
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, client.PasswordHash))
+            {
+                _logger.LogWarning("Ошибка входа: неправильный пароль для {Email}", dto.Email);
                 return null;
+            }
 
             // 3. Геренация токена, если пароль правильный.
+            _logger.LogInformation("Клиент {Email}: вход выполнен.", dto.Email);
             return new TokenDto { Token = GenerateToken(client) };
         }
 
@@ -88,12 +104,12 @@ namespace BankProductsAPI.Application.Services
 
             // 2. Создание токена.
             var jwt = new JwtSecurityToken(
-                issuer: AuthOptions.ISSUER, // Кто выдал токен.
-                audience: AuthOptions.AUDIENCE, // Для кого токен.
+                issuer: _authOptions.Issuer, // Кто выдал токен.
+                audience: _authOptions.Audience, // Для кого токен.
                 claims: claims, // Что внутри токена.
                 expires: DateTime.UtcNow.AddMinutes(60), // Сколько живёт токен.
                 signingCredentials: new SigningCredentials( // Каким ключом подписан.
-                    AuthOptions.GetSymmetricSecurityKey(),
+                    _authOptions.GetSymmetricSecurityKey(),
                     SecurityAlgorithms.HmacSha256));
 
             // 3. Преображение токена в строку.

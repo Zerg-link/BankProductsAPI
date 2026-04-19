@@ -6,6 +6,7 @@ using BankProductsAPI.Application.DTOs.Deposit;
 using BankProductsAPI.Application.Interfaces;
 using BankProductsAPI.Domain.Entities;
 using BankProductsAPI.Domain.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace BankProductsAPI.Application.Services
 {
@@ -16,16 +17,18 @@ namespace BankProductsAPI.Application.Services
     {
         private readonly IDepositRepository _repository;
         private readonly IMapper _mapper;
+        private readonly ILogger<DepositService> _logger;
 
         /// <summary>
         /// Конструктор сервиса.
         /// </summary>
         /// <param name="repository">Репозиторий, содержащий методы для работы с CRUD (непосредственно методы работы с БД).</param>
         /// <param name="mapper"> Нужен для того, чтобы облегчить передачу данных между классами. Автоматически копирует все атрибуты. </param> 
-        public DepositService(IDepositRepository repository, IMapper mapper)
+        public DepositService(IDepositRepository repository, IMapper mapper, ILogger<DepositService> logger)
         {
             _repository = repository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -62,6 +65,7 @@ namespace BankProductsAPI.Application.Services
             deposit.ExpiresAt = DateTime.UtcNow.AddMonths(dto.Duration);
             deposit.Status = DepositStatus.Active;
             await _repository.AddAsync(deposit);
+            _logger.LogInformation("Вклад {Id} создан для клиента {ClientId}. Сумма: {Amount}.", deposit.Id, clientId, dto.Amount);
             return _mapper.Map<DepositDto>(deposit);
         }
 
@@ -73,6 +77,7 @@ namespace BankProductsAPI.Application.Services
         public async Task DeleteAsync(int id)
         {
             await _repository.DeleteAsync(id);
+            _logger.LogInformation("Вклад {Id} удалён.", id);
         }
 
         /// <summary>
@@ -83,8 +88,11 @@ namespace BankProductsAPI.Application.Services
         public async Task<DepositYieldDto?> CalculateYieldAsync(int id)
         {
             var deposit = await _repository.GetByIdAsync(id);
-            if (deposit == null) 
+            if (deposit == null)
+            {
+                _logger.LogWarning("Вклад {Id} не был найден для рассчёта.", id);
                 return null;
+            }
 
             DepositYieldDto depositYieldDto = new DepositYieldDto();
             depositYieldDto.OriginalAmount = deposit.Amount;

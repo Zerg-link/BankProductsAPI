@@ -2,5 +2,6 @@
   <Project Path="BankProductsAPI.Application/BankProductsAPI.Application.csproj" />
   <Project Path="BankProductsAPI.Domain/BankProductsAPI.Domain.csproj" />
   <Project Path="BankProductsAPI.Infrastructure/BankProductsAPI.Infrastructure.csproj" />
+  <Project Path="BankProductsAPI.Tests/BankProductsAPI.Tests.csproj" Id="84833d5c-e18e-4166-b0cf-747171475605" />
   <Project Path="BankProductsAPI/BankProductsAPI.csproj" />
 </Solution>

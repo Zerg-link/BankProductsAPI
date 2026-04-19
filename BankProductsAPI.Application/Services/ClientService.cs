@@ -5,6 +5,7 @@ using AutoMapper;
 using BankProductsAPI.Application.DTOs.Client;
 using BankProductsAPI.Application.Interfaces;
 using BankProductsAPI.Domain.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace BankProductsAPI.Application.Services
 {
@@ -15,16 +16,19 @@ namespace BankProductsAPI.Application.Services
     {
         private readonly IClientRepository _repository;
         private readonly IMapper _mapper;
+        private readonly ILogger<ClientService> _logger;
+
 
         /// <summary>
         /// Конструктор сервиса.
         /// </summary>
         /// <param name="repository">Репозиторий, содержащий методы для работы с CRUD (непосредственно методы работы с БД).</param>
         /// <param name="mapper"> Нужен для того, чтобы облегчить передачу данных между классами. Автоматически копирует все атрибуты. </param>
-        public ClientService(IClientRepository repository, IMapper mapper)
+        public ClientService(IClientRepository repository, IMapper mapper, ILogger<ClientService> logger)
         {
             _repository = repository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -58,8 +62,9 @@ namespace BankProductsAPI.Application.Services
             var client = _mapper.Map<Client>(dto);
             client.RegisterDate = DateTime.UtcNow;
             client.CreditRating = 50;
-            client.PasswordHash = dto.Password;
+            client.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
             await _repository.AddAsync(client);
+            _logger.LogInformation("Клиент {Id} создан.", client.Id);
             return _mapper.Map<ClientDto>(client);
         }
 
@@ -71,6 +76,7 @@ namespace BankProductsAPI.Application.Services
         public async Task DeleteAsync(int id)
         {
             await _repository.DeleteAsync(id);
+            _logger.LogInformation("Клиент {Id} удалён", id);
         }
     }
 }

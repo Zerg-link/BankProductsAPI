@@ -9,30 +9,39 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
+// Определение логгера.
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Настройка логгера.
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services)
+    .WriteTo.Console()
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day));
+
 // Авторизация JWT.
 builder.Services.AddAuthorization();
+
+var authOptions = builder.Configuration.GetSection("Jwt").Get<AuthOptions>();
+builder.Services.AddSingleton(authOptions);
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            // указывает, будет ли валидироваться издатель при валидации токена
             ValidateIssuer = true,
-            // строка, представляющая издателя
-            ValidIssuer = AuthOptions.ISSUER,
-            // будет ли валидироваться потребитель токена
+            ValidIssuer = authOptions.Issuer,
             ValidateAudience = true,
-            // установка потребителя токена
-            ValidAudience = AuthOptions.AUDIENCE,
-            // будет ли валидироваться время существования
+            ValidAudience = authOptions.Audience,
             ValidateLifetime = true,
-            // установка ключа безопасности
-            IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-            // валидация ключа безопасности
+            IssuerSigningKey = authOptions.GetSymmetricSecurityKey(),
             ValidateIssuerSigningKey = true,
         };
     });
@@ -66,7 +75,13 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateClientValidator>();
 
+
+
+
 var app = builder.Build();
+
+// Использование логгера.
+app.UseSerilogRequestLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -81,5 +96,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();

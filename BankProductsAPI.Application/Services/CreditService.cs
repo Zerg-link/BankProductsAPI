@@ -6,6 +6,7 @@ using BankProductsAPI.Application.DTOs.Credit;
 using BankProductsAPI.Application.Interfaces;
 using BankProductsAPI.Domain.Entities;
 using BankProductsAPI.Domain.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace BankProductsAPI.Application.Services
 {
@@ -16,16 +17,18 @@ namespace BankProductsAPI.Application.Services
     {
         private readonly ICreditRepository _repository;
         private readonly IMapper _mapper;
+        private readonly ILogger<CreditService> _logger;
 
         /// <summary>
         /// Конструктор класса.
         /// </summary>
         /// <param name="repository">Репозиторий, содержащий методы для работы с CRUD (непосредственно методы работы с БД).</param>
         /// <param name="mapper">Нужен для того, чтобы облегчить передачу данных между классами. Автоматически копирует все атрибуты.</param>
-        public CreditService(ICreditRepository repository, IMapper mapper)
+        public CreditService(ICreditRepository repository, IMapper mapper, ILogger<CreditService> logger)
         {
             _repository = repository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -64,6 +67,7 @@ namespace BankProductsAPI.Application.Services
             credit.MonthlyPayment = CalculateMonthlyPayment(dto.Amount, dto.InterestRate, dto.Duration);
 
             await _repository.AddAsync(credit);
+            _logger.LogInformation("Кредит {Id} создан для клиента {ClientId}. Сумма: {Amount}.", credit.Id, clientId, dto.Amount);
             return _mapper.Map<CreditDto>(credit);
         }
 
@@ -75,6 +79,7 @@ namespace BankProductsAPI.Application.Services
         public async Task DeleteAsync(int id)
         {
             await _repository.DeleteAsync(id);
+            _logger.LogInformation("Кредит {Id} удалён.", id);
         }
 
         /// <summary>
@@ -85,7 +90,10 @@ namespace BankProductsAPI.Application.Services
         public async Task<CreditCalculationDto?> CalculateAsync(int id)
         {
             var credit = await _repository.GetByIdAsync(id);
-            if (credit == null) return null;
+            if (credit == null) {
+                _logger.LogWarning("Кредит {Id} не был найден для рассчётов.", id);
+                return null; 
+            }
 
             var monthlyPayment = CalculateMonthlyPayment(credit.Amount, credit.InterestRate, credit.Duration);
 
